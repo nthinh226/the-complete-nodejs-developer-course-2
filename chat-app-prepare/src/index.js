@@ -14,19 +14,25 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+const syncAwait = (ms) => {
+	const end = Date.now() + ms;
+	while (Date.now() < end) continue;
+};
 let count = 0;
-
 io.on('connection', (socket) => {
 	console.log('a new user connected');
-	socket.emit('countUpdated', count);
-
-	socket.on('increment', () => {
+	const autoSend = setInterval(() => {
+		console.log(count);
+		io.emit('serverSendRequest', count);
 		count++;
-		io.emit('countUpdated', count);
-	})
+	}, 2000);
+	socket.on('clientSendRequest', () => {
+		io.emit('serverSendRequest');
+	});
+	socket.on('stop', () => {
+		clearInterval(autoSend);
+	});
 });
-
-
 
 app.use(express.static(publicDirectoryPath));
 

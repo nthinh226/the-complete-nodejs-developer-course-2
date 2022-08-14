@@ -10,21 +10,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-let count = 0;
 io.on('connection', (socket) => {
 	console.log('a user connected');
 
-	socket.emit('countUpdated', count);
+	socket.emit('message', "Welcome!");
 
-	socket.on('increment', () => {
-		count++;
-		// socket.emit('countUpdated', count);
-		io.emit('countUpdated', count);
-	});
-	socket.emit('refreshRequested');
-	socket.on('sendRequested', () => {
-		io.emit('refreshRequested');
-	});
+	socket.on('sendMessage', (message) => {
+		io.emit('message', message);
+	})
 });
 
 const port = process.env.PORT || 3000;

@@ -1,18 +1,12 @@
 const socket = io();
 
-socket.on('countUpdated', (count) => {
-	console.log('The count has been updated', count);
+socket.on('message', (meessage) => {
+	console.log(meessage);
 });
 
-document.querySelector('#increment').addEventListener('click', () => {
-	console.log('Clicked');
-	socket.emit('increment')
-})
+document.querySelector('#message-form').addEventListener('submit', (e) => {
+	e.preventDefault();
+	const message = e.target.elements.message;
 
-socket.on('refreshRequested', () => {
-	console.log('Refresh ok!!');
-})
-
-setTimeout(() => {
-	socket.emit('sendRequested')
-}, 2000)
+	socket.emit('sendMessage', message);
+});
